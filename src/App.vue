@@ -1,19 +1,59 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <label>Search Pokemon:</label>
+    <input type="text" v-model="search" placeholder="Search Pokemon" />
+    <HelloWorld :pokemonList="filteredPokeList" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from "./components/HelloWorld.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    HelloWorld,
+  },
+  data() {
+    return {
+      search: "",
+      pokemonList: [],
+    };
+  },
+  created() {
+    this.loadPokeList();
+  },
+  methods: {
+    async fetchPokeList() {
+      try {
+        const res = await fetch(
+          "https://pokeapi.co/api/v2/pokemon/?limit=151&offset=0"
+        );
+        const data = await res.json();
+        console.log(data);
+        this.pokemonList = data.results;
+        localStorage.setItem("pokemonList", JSON.stringify(this.pokemonList));
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    loadPokeList() {
+      const localList = localStorage.getItem("pokemonList");
+      if (!localList) {
+        this.fetchPokeList();
+      } else {
+        this.pokemonList = JSON.parse(localList);
+      }
+    },
+  },
+  computed: {
+    filteredPokeList() {
+      return this.pokemonList.filter((pokemon) => {
+        return pokemon.name.toLowerCase().includes(this.search.toLowerCase());
+      });
+    },
+  },
+};
 </script>
 
 <style>
