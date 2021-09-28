@@ -4,7 +4,7 @@
       {{ pokemon.name }}
     </h3>
     <img :src="pokemonInfo.img"/>
-    <p class="id">({{ pokemonInfo.id }})</p>
+    <p class="id">#{{ pokemonInfo.id }}</p>
     <type-badge v-for="type in pokemonInfo.types" :key="type" :type="type"/>
   </li>
 </template>
